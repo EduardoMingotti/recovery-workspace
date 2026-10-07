@@ -1,0 +1,16 @@
+{
+  "name": "Recovery Workspace",
+  "short_name": "Recovery",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f5f3f7",
+  "theme_color": "#5b2c83",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

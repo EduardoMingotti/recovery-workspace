@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#5b2c83" />
+  <title>Recovery Workspace</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+</head>
+<body>
+  <div id="toast" class="toast"></div>
+  <section id="setupView" class="center-card hidden">
+    <h1>Configurar conexão</h1>
+    <p>Informe somente a URL do projeto e a chave publicável do Supabase. Nunca use uma chave secreta.</p>
+    <label>URL do projeto<input id="setupUrl" placeholder="https://xxxx.supabase.co" /></label>
+    <label>Chave publicável<input id="setupKey" placeholder="sb_publishable_..." /></label>
+    <button id="saveSetup" class="primary">Salvar configuração</button>
+  </section>
+
+  <section id="loginView" class="center-card hidden">
+    <div class="brand">RW</div>
+    <h1>Recovery Workspace</h1>
+    <p>Entre com o usuário criado no Supabase.</p>
+    <form id="loginForm">
+      <label>E-mail<input id="email" type="email" required /></label>
+      <label>Senha<input id="password" type="password" required /></label>
+      <button class="primary" type="submit">Entrar</button>
+    </form>
+    <button id="changeSetup" class="link-button">Alterar conexão</button>
+  </section>
+
+  <div id="appView" class="hidden">
+    <header class="topbar">
+      <div><strong>Recovery Workspace</strong><small id="userEmail"></small></div>
+      <div class="top-actions">
+        <input id="fileInput" type="file" accept=".csv" hidden />
+        <button id="importBtn">Importar CSV</button>
+        <button id="reportBtn">Relatório</button>
+        <button id="newLeadBtn" class="primary">Novo lead</button>
+        <button id="logoutBtn">Sair</button>
+      </div>
+    </header>
+
+    <section class="filters">
+      <input id="searchInput" placeholder="Buscar clínica..." />
+      <select id="originFilter"><option value="">Todas as origens</option></select>
+      <button id="clearFilters">Limpar filtros</button>
+      <span id="leadCount"></span>
+    </section>
+
+    <main id="board" class="board"></main>
+  </div>
+
+  <dialog id="leadDialog">
+    <form id="leadForm" method="dialog">
+      <div class="dialog-head"><h2 id="dialogTitle">Lead</h2><button type="button" class="icon-btn" data-close>×</button></div>
+      <input id="leadId" type="hidden" />
+      <div class="grid2">
+        <label>Clínica<input id="clinicName" required /></label>
+        <label>Origem<input id="origin" list="originOptions" required /></label>
+        <datalist id="originOptions"></datalist>
+        <label>Etapa<select id="stage"></select></label>
+        <label>Link do HubSpot<input id="crmUrl" type="url" placeholder="https://..." /></label>
+        <label>Resultado<input id="result" placeholder="Ex.: sem retorno, interessado..." /></label>
+        <label>Valor recuperado<input id="recoveredValue" type="number" min="0" step="0.01" /></label>
+        <label>Data da última atividade<input id="lastActivity" type="date" /></label>
+      </div>
+      <label>Observação rápida<textarea id="notes" rows="3"></textarea></label>
+      <div class="dialog-actions">
+        <button id="deleteLead" type="button" class="danger hidden">Excluir</button>
+        <a id="openCrm" class="button-link hidden" target="_blank" rel="noopener">Abrir HubSpot</a>
+        <button type="submit" class="primary">Salvar</button>
+      </div>
+    </form>
+    <section id="actionsSection" class="actions-section hidden">
+      <h3>Registros rápidos</h3>
+      <form id="actionForm" class="action-form">
+        <input id="actionDate" type="date" required />
+        <select id="actionType"><option>Ligação</option><option>WhatsApp</option><option>E-mail</option><option>Reunião</option><option>Outro</option></select>
+        <input id="actionDescription" placeholder="Resultado da ação" required />
+        <button class="primary">Adicionar</button>
+      </form>
+      <div id="actionsList"></div>
+    </section>
+  </dialog>
+
+  <dialog id="importDialog">
+    <div class="dialog-head"><h2>Importar CSV</h2><button type="button" class="icon-btn" data-close>×</button></div>
+    <p>Associe as colunas do arquivo. Os novos registros entram em “Não iniciado”.</p>
+    <div id="mapping"></div>
+    <div class="dialog-actions"><button id="confirmImport" class="primary">Importar</button></div>
+  </dialog>
+
+  <dialog id="reportDialog">
+    <div class="dialog-head"><h2>Relatório executivo</h2><button type="button" class="icon-btn" data-close>×</button></div>
+    <div class="grid2">
+      <label>Início<input id="reportStart" type="date" /></label>
+      <label>Fim<input id="reportEnd" type="date" /></label>
+    </div>
+    <p class="muted">O período considera a data da última atividade.</p>
+    <div class="dialog-actions"><button id="generateReport" class="primary">Abrir relatório para salvar em PDF</button></div>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
